@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/SSM-01-Wyy/src/main/resources/com/fc/mapper/TbMusicMapper.xml" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/SSM-01-Wyy/src/main/resources/com/fc/mapper/TbSheetMapper.xml" dialect="MySQL" />
+  </component>
+  <component name="SqlResolveMappings">
+    <file url="file://$PROJECT_DIR$/SSM-01-Wyy/src/main/resources/com/fc/mapper/TbMusicMapper.xml" scope="{&quot;node&quot;:{  &quot;@negative&quot;:&quot;1&quot;,  &quot;group&quot;:{   &quot;@kind&quot;:&quot;root&quot;,   &quot;node&quot;:{    &quot;name&quot;:{     &quot;@qname&quot;:&quot;40e6f877-c6cc-4b2e-93a8-3940ad4ecbbe&quot;    },    &quot;group&quot;:{     &quot;@kind&quot;:&quot;schema&quot;,     &quot;node&quot;:{      &quot;name&quot;:{       &quot;@qname&quot;:&quot;music&quot;      }     }    }   }  } }}" />
+  </component>
+</project>
