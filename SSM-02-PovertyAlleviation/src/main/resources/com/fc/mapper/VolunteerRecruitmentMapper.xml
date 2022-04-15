@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fc.dao.VolunteerRecruitmentMapper">
+  <update id="click" >
+    update  volunteer_recruitment set click_num = click_num+1 , last_click_time = #{lastClickTime} where id = #{id}
+  </update>
   <resultMap id="BaseResultMap" type="com.fc.entity.VolunteerRecruitment">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -81,8 +84,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, create_time, total, position, work_salary, work_place, work_time, recruits_num, 
-    recruits_time, recruits_end_time, lead, contact, picture, release_date, last_click_time, 
+    id, create_time, total, position, work_salary, work_place, work_time, recruits_num,
+    recruits_time, recruits_end_time,  `lead`, contact, picture, release_date, last_click_time,
     click_num
   </sql>
   <sql id="Blob_Column_List">
@@ -119,7 +122,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
-    select 
+    select
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
@@ -137,20 +140,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.fc.entity.VolunteerRecruitment">
-    insert into volunteer_recruitment (id, create_time, total, 
-      position, work_salary, work_place, 
-      work_time, recruits_num, recruits_time, 
-      recruits_end_time, lead, contact, 
-      picture, release_date, last_click_time, 
+    insert into volunteer_recruitment (id, create_time, total,
+      position, work_salary, work_place,
+      work_time, recruits_num, recruits_time,
+      recruits_end_time, lead, contact,
+      picture, release_date, last_click_time,
       click_num, work_require)
-    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{total,jdbcType=VARCHAR}, 
-      #{position,jdbcType=VARCHAR}, #{workSalary,jdbcType=VARCHAR}, #{workPlace,jdbcType=VARCHAR}, 
-      #{workTime,jdbcType=VARCHAR}, #{recruitsNum,jdbcType=INTEGER}, #{recruitsTime,jdbcType=DATE}, 
-      #{recruitsEndTime,jdbcType=DATE}, #{lead,jdbcType=VARCHAR}, #{contact,jdbcType=VARCHAR}, 
-      #{picture,jdbcType=VARCHAR}, #{releaseDate,jdbcType=DATE}, #{lastClickTime,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{total,jdbcType=VARCHAR},
+      #{position,jdbcType=VARCHAR}, #{workSalary,jdbcType=VARCHAR}, #{workPlace,jdbcType=VARCHAR},
+      #{workTime,jdbcType=VARCHAR}, #{recruitsNum,jdbcType=INTEGER}, #{recruitsTime,jdbcType=DATE},
+      #{recruitsEndTime,jdbcType=DATE}, #{lead,jdbcType=VARCHAR}, #{contact,jdbcType=VARCHAR},
+      #{picture,jdbcType=VARCHAR}, #{releaseDate,jdbcType=DATE}, #{lastClickTime,jdbcType=TIMESTAMP},
       #{clickNum,jdbcType=INTEGER}, #{workRequire,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.fc.entity.VolunteerRecruitment">
+  <insert id="insertSelective"  useGeneratedKeys="true" keyProperty="id" parameterType="com.fc.entity.VolunteerRecruitment">
     insert into volunteer_recruitment
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -184,7 +187,7 @@
         recruits_end_time,
       </if>
       <if test="lead != null">
-        lead,
+        `lead`,
       </if>
       <if test="contact != null">
         contact,
@@ -299,7 +302,7 @@
         recruits_end_time = #{record.recruitsEndTime,jdbcType=DATE},
       </if>
       <if test="record.lead != null">
-        lead = #{record.lead,jdbcType=VARCHAR},
+        `lead` = #{record.lead,jdbcType=VARCHAR},
       </if>
       <if test="record.contact != null">
         contact = #{record.contact,jdbcType=VARCHAR},
@@ -400,7 +403,7 @@
         recruits_end_time = #{recruitsEndTime,jdbcType=DATE},
       </if>
       <if test="lead != null">
-        lead = #{lead,jdbcType=VARCHAR},
+        `lead` = #{lead,jdbcType=VARCHAR},
       </if>
       <if test="contact != null">
         contact = #{contact,jdbcType=VARCHAR},

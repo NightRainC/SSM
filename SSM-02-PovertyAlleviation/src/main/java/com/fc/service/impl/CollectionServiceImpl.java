@@ -2,91 +2,95 @@ package com.fc.service.impl;
 
 import com.fc.dao.CollectionMapper;
 import com.fc.entity.Collection;
+import com.fc.entity.CollectionExample;
 import com.fc.service.CollectionService;
+import com.fc.vo.DataVo;
+import com.fc.vo.RestVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class CollectionServiceImpl implements CollectionService {
-    static private final Map<String, Object> map = new HashMap<>();
-    static private final Map<String, Object> errMap = new HashMap<>();
+
     @Autowired
     private CollectionMapper collectionMapper;
 
     @Override
-    public Map<String, Object> add(Collection collection) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("message", "收藏失败！");
-        map.put("success", false);
-        map.put("code", 500);
-        errMap.put("errMsg", "添加失败！参数为null或主键重复");
-        map.put("data", errMap);
-
-        if (collection == null) return map;
-
-        int affectedRows = collectionMapper.insert(collection);
-
-        if (affectedRows != 1) return map;
-
-        map.put("message", "收藏成功！");
-        map.put("success", true);
-        map.put("code", 200);
-        map.put("data", null);
-        return map;
+    public RestVo add(Collection collection) {
+        if (collection == null) return new RestVo(-1000, false, "fail", null);
+        if (collection.getCreateTime() == null) {
+            collection.setCreateTime(new Date());
+        }
+        if (collectionMapper.insertSelective(collection) != 1) {
+            return new RestVo(-1000, false, "添加失败", null);
+        }
+        return new RestVo(200, true, "添加成功", collection);
     }
 
     @Override
-    public Map<String, Object> del(Long id) {
-        map.put("message", "删除失败！");
-        map.put("code", 404);
-        map.put("success", false);
-        errMap.put("errMsg", "删除失败，请求参数异常");
-        map.put("data",errMap);
-
-        if (id == null) return map;
-
-        int affectedRows = collectionMapper.deleteByPrimaryKey(id);
-
-        if (affectedRows != 1) return map;
-
-        map.put("message", "删除成功！");
-        map.put("code", 200);
-        map.put("success", true);
-        map.put("data", null);
-
-        return map;
+    public RestVo delete(Long id) {
+        collectionMapper.deleteByPrimaryKey(id);
+        return new RestVo(200, true, "删除成功", null);
     }
 
     @Override
-    public Map<String, Object> getList(Integer pageNo, Integer pageSize) {
-        map.put("code",404);
-        map.put("success",false);
-        map.put("message","获取失败！");
-        errMap.put("errMsg", "请求参数为null");
-        map.put("data", errMap);
-        if(pageNo == null || pageSize == null) return  map;
+    public RestVo getList(Integer pageNum, Integer pageSize, Collection collection) {
+        try {
+            CollectionExample example = null;
+            if (collection != null) {
+                example = new CollectionExample();
+                CollectionExample.Criteria criteria = example.createCriteria();
+                if (collection.getId() != null)
+                    criteria.andIdEqualTo(collection.getId());
 
-        pageNo = pageNo < 1 ? 1 : pageNo;
+                if (collection.getUserId() != null)
+                    criteria.andUserIdEqualTo(collection.getUserId());
 
-        pageSize = pageSize < 1 ? 5 : pageSize;
+                if (collection.getRefId() != null)
+                    criteria.andRefIdEqualTo(collection.getRefId());
+                if (collection.getTableName() != null)
+                    criteria.andTableNameLike("%" + collection.getTableName() + "%");
 
-        PageHelper.startPage(pageNo,pageSize);
+                if (collection.getName() != null)
+                    criteria.andTableNameLike("%" + collection.getName() + "%");
 
-        List<Collection> list = collectionMapper.selectByExample(null);
+                if (collection.getType() != null)
+                    criteria.andTypeEqualTo(collection.getType());
 
-        PageInfo<Collection> pageInfo = new PageInfo<>(list);
+                if (collection.getRecommendType() != null)
+                    criteria.andRecommendTypeEqualTo(collection.getRecommendType());
+            }
+            pageNum = Math.max(pageNum, 1);
+            pageSize = Math.max(pageSize, 1);
+            PageHelper.startPage(pageNum, pageSize);
+            List<Collection> list = collectionMapper.selectByExample(example);
+            PageInfo<Collection> pageInfo = new PageInfo<>(list);
+            DataVo<Collection> data = new DataVo<>(pageInfo.getTotal(), list, pageNum, pageSize);
+            return new RestVo(200, true, "OK", data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new RestVo(-400, false, "fail", null);
+        }
 
-        map.put("code",200);
-        map.put("success",true);
-        map.put("message","获取成功！");
-        map.put("data",pageInfo);
+    }
 
-        return map;
+    @Override
+    public RestVo update(Collection collection) {
+        if (collection.getPicture().equals("")) {
+            System.out.println(collection.getPicture() + "传了个空字符串而不是null");
+            return new RestVo(-1000, false, "不要给我传空串", null);
+        }
+        if (collectionMapper.updateByPrimaryKeySelective(collection) < 1) {
+            return new RestVo(-1000, false, "修改失败", null);
+        }
+        Collection data = collectionMapper.selectByPrimaryKey(collection.getId());
+
+        return new RestVo(200, true, "修改成功", data);
     }
 }

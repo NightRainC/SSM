@@ -1,16 +1,18 @@
 package com.fc.service;
 
 import com.fc.entity.User;
-
-import java.util.Map;
+import com.fc.vo.RestVo;
 
 public interface UserService {
-     //添加一个
-     Map<String, Object> add(User user);
-     //分页
-     Map<String, Object> getList(String pageNo, String pageSize);
 
-    Map<String, Object> del(Long id);
+    //添加一个
+    RestVo add(User user);
 
-    Map<String, Object> update(User user);
+    RestVo delete(Long id);
+
+    RestVo update(User user);
+
+    RestVo getList(Integer pageNum, Integer pageSize, User user);
+
+    RestVo search(String keyword);
 }

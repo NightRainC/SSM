@@ -12,16 +12,52 @@
 
     <!--扫描指定路径下的所有注解-->
     <context:component-scan base-package="com.fc.controller"/>
-<!--    &lt;!&ndash;自定义类型转换器&ndash;&gt;-->
-<!--    <bean name="factoryBean" class="org.springframework.context.support.ConversionServiceFactoryBean">-->
-<!--        <property name="converters">-->
-<!--            <set>-->
-<!--                <bean class="com.fc.utils.StringToDateConverter"/>-->
-<!--            </set>-->
-<!--        </property>-->
-<!--    </bean>-->
+    <!--自定义类型转换器-->
+    <!--    <bean name="factoryBean" class="org.springframework.context.support.ConversionServiceFactoryBean">-->
+    <!--        <property name="converters">-->
+    <!--            <set>-->
+    <!--                <bean class="com.fc.utils.StringToDateConverter"/>-->
+    <!--            </set>-->
+    <!--        </property>-->
+    <!--    </bean>-->
     <mvc:annotation-driven/>
+    <mvc:default-servlet-handler/>
+    <!--配置拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--/*代表一级路径，/**代表多级路径-->
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/user/login"/>
+            <mvc:exclude-mapping path="/login.html"/>
+            <mvc:exclude-mapping path="/js/jquery-1.8.3.min.js"/>
+            <bean class="com.fc.interceptor.JwtInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
     <!--用于导入其他的配置文件-->
     <import resource="classpath:applicationContext.xml"/>
+
+
+    <!--文件解析器-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!--所有文件的最大size，（字节）-->
+        <property name="maxUploadSize" value="500000000000"/>
+        <!--4kb缓存-->
+        <property name="maxInMemorySize" value="4096"/>
+        <!--单个文件的最大size-->
+        <property name="maxUploadSizePerFile" value="20000000"/>
+        <property name="defaultEncoding" value="defaultEncoding"/>
+    </bean>
+
+    <!--跨域配置-->
+    <mvc:cors>
+        <mvc:mapping path="/**" allowed-methods="GET,POST,PUT,DELETE,OPTIONS" allowed-origins="*"/>
+    </mvc:cors>
+
+    <!--    <mvc:interceptors>-->
+    <!--        <mvc:interceptor>-->
+    <!--            <mvc:mapping path="/crossOrigin/*"/>-->
+    <!--            <bean class="com.fc.interceptor.CrossInterceptor"/>-->
+    <!--        </mvc:interceptor>-->
+    <!--    </mvc:interceptors>-->
 </beans>

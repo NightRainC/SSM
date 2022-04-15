@@ -1,17 +1,19 @@
 package com.fc.service;
 
 import com.fc.entity.Carousel;
+import com.fc.vo.RestVo;
 
-import java.util.Map;
+
 
 public interface CarouselService {
-    Map<String, Object> add(Carousel carousel);
+    RestVo add(Carousel carousel);
 
-    Map<String, Object> del(Integer id);
+    RestVo delete(Integer id);
 
-    Map<String, Object> update(Carousel carousel);
+    RestVo update(Carousel carousel);
 
-    Map<String, Object> getList(String carousel);
 
-    Map<String, Object> setState(Integer id);
+    RestVo setState(Integer id);
+
+    RestVo getList(Integer pageNum, Integer pageSize, Carousel keyword);
 }

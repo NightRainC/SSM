@@ -1,13 +1,14 @@
 package com.fc.service;
 
 import com.fc.entity.Collection;
-
-import java.util.Map;
+import com.fc.vo.RestVo;
 
 public interface CollectionService {
-    Map<String, Object> add(Collection collection);
+    RestVo add(Collection collection);
 
-    Map<String, Object> del(Long id);
+    RestVo delete(Long id);
 
-    Map<String, Object> getList(Integer pageNo, Integer pageSize);
+    RestVo getList(Integer pageNum, Integer pageSize, Collection collection);
+
+    RestVo update(Collection collection);
 }

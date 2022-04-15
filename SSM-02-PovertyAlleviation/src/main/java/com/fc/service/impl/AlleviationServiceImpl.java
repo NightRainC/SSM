@@ -2,105 +2,100 @@ package com.fc.service.impl;
 
 import com.fc.dao.AlleviationMapper;
 import com.fc.entity.Alleviation;
+import com.fc.entity.AlleviationExample;
 import com.fc.service.AlleviationService;
+import com.fc.vo.DataVo;
+import com.fc.vo.RestVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
+
 @Service
 public class AlleviationServiceImpl implements AlleviationService {
-    static private final Map<String, Object> map = new HashMap<>();
-    static private final Map<String, Object> errMap = new HashMap<>();
     @Autowired
     private AlleviationMapper alleviationMapper;
+
     @Override
-    public Map<String, Object> add(Alleviation alleviation) {
-        errMap.put("errMsg","请求参数为null！");
-
-        map.put("code",500);
-        map.put("success",false);
-        map.put("message","添加失败！");
-        map.put("data",errMap);
-
-        if(alleviation == null) return  map;
-
-        int row = alleviationMapper.insert(alleviation);
-
-        if(row != 1){
-            errMap.put("errMsg","主键重复或数据库异常");
-            map.put("data",errMap);
-            return  map;
+    public RestVo add(Alleviation alleviation) {
+        if (alleviation.getCreateTime() == null) {
+            alleviation.setCreateTime(new Date());
         }
-        map.put("code",200);
-        map.put("success",true);
-        map.put("message","添加成功！");
-        map.put("data",null);
 
-        return map;
-    }
-
-    @Override
-    public Map<String, Object> delete(Long id) {
-        map.put("code",500);
-        map.put("success",false);
-        map.put("message","删除失败！");
-
-
-        int row = alleviationMapper.deleteByPrimaryKey(id);
-        if(row < 1){
-            errMap.put("errMsg","数据库中无此ID");
-            map.put("data",errMap);
-            return map;
+        if (alleviationMapper.insertSelective(alleviation) < 1) {
+            return new RestVo(-1000, false, "添加失败", null);
         }
-        map.put("code",200);
-        map.put("success",true);
-        map.put("message","OK");
-        map.put("data",null);
-        return map;
+        return new RestVo(200, true, "添加成功", alleviation);
     }
 
     @Override
-    public Map<String, Object> update(Alleviation alleviation) {
-        map.put("code", 500);
-        map.put("success",false);
-        map.put("message","NO");
-        long id = alleviation.getId();
-        int row = alleviationMapper.updateByPrimaryKeySelective(alleviation);
-        if(row < 1){
-            errMap.put("errMst","数据库中无此ID");
-            map.put("data",errMap);
-            return map;
+    public RestVo delete(Long id) {
+        try {
+            alleviationMapper.deleteByPrimaryKey(id);
+            return new RestVo(200, true, "删除成功", null);
+        } catch (Exception e) {
+            return new RestVo(-1000, false, "您的操作有问题", null);
         }
-        Alleviation resBean = alleviationMapper.selectByPrimaryKey(id);
-        map.put("code",200);
-        map.put("success",true);
-        map.put("message","OK");
-        map.put("data",resBean);
-        return map;
     }
 
     @Override
-    public Map<String, Object> getList(Integer pageNo, Integer pageSize) {
-        pageNo = Math.max(1,pageNo);
-        pageSize = Math.max(1,pageSize);
-        errMap.put("errMsg","数据库中无数据！");
-        map.put("code", 500);
-        map.put("success",false);
-        map.put("message","数据库中无数据！");
-        map.put("data",errMap);
-
-        PageHelper.startPage(pageNo,pageSize);
-        List<Alleviation> list = alleviationMapper.selectByExample(null);
-        if(list == null)return map;
-        PageInfo<Alleviation> pageInfo = new PageInfo<>(list);
-        map.put("code",200);
-        map.put("success",true);
-        map.put("message","OK");
-        map.put("data",pageInfo);
-        return map;
+    public RestVo update(Alleviation alleviation) {
+        if (alleviationMapper.updateByPrimaryKeySelective(alleviation) < 1) {
+            return new RestVo(-1000, false, "更新失败", null);
+        }
+        Long id = alleviation.getId();
+        Alleviation data = alleviationMapper.selectByPrimaryKey(alleviation.getId());
+        return new RestVo(200, true, "更新成功", data);
     }
+
+    @Override
+    public RestVo getList(Integer pageNum, Integer pageSize, Alleviation alleviation) {
+        try {
+            List<Alleviation> list;
+            AlleviationExample example = null;
+            if (alleviation != null) {
+                example = new AlleviationExample();
+                AlleviationExample.Criteria criteria = example.createCriteria();
+                if (alleviation.getId() != null) {
+                    click(alleviation.getId(), alleviation.getLastClickTime());
+                    criteria.andIdEqualTo(alleviation.getId());
+                }
+                if (alleviation.getTitle() != null)
+                    criteria.andTitleLike("%" + alleviation.getTitle() + "%");
+
+                if (alleviation.getType() != null)
+                    criteria.andTypeLike("%" + alleviation.getType() + "%");
+
+            }
+            pageNum = Math.max(pageNum, 1);
+            pageSize = Math.max(pageSize, 1);
+            PageHelper.startPage(pageNum, pageSize);
+            list = alleviationMapper.selectByExampleWithBLOBs(example);
+            PageInfo<Alleviation> pageInfo = new PageInfo<>(list);
+            DataVo<Alleviation> dataVo = new DataVo<>(pageInfo.getTotal(), list, pageNum, pageSize);
+            return new RestVo(200, true, "OK", dataVo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new RestVo(-400, false, "服务器发生异常,请联系管理员", null);
+        }
+
+    }
+
+    @Override
+    public RestVo click(Long id, Date lastClickTime) {
+        if (lastClickTime == null) {
+            lastClickTime = new Date();
+        }
+        if (alleviationMapper.click(id, lastClickTime) < 1) {
+            return new RestVo(-1000, false, "数据库中无此ID", null);
+        }
+        Alleviation data = alleviationMapper.selectByPrimaryKey(id);
+        return new RestVo(200, true, "点击成功", data);
+    }
+
+
 }

@@ -2,126 +2,99 @@ package com.fc.service.impl;
 
 import com.fc.dao.UserMapper;
 import com.fc.entity.User;
+import com.fc.entity.UserExample;
 import com.fc.service.UserService;
+import com.fc.vo.DataVo;
+import com.fc.vo.RestVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
-    static private final Map<String, Object> map = new HashMap<>();
-    static private final Map<String, Object> errMap = new HashMap<>();
+
     @Autowired
     private UserMapper userMapper;
 
-    //添加service
+
     @Override
-    public Map<String, Object> add(User user) {
-        int affectedRows = userMapper.insert(user);
-        if (affectedRows != 1) {
-            map.put("message", "用户添加失败！");
-            map.put("code", 400);
-            map.put("success", false);
-            errMap.put("errMsg", "添加失败");
-            map.put("data", errMap);
-            return map;
+    public RestVo add(User user) {
+        if (user.getCreateTime() == null) {
+            user.setCreateTime(new Date());
         }
-        map.put("message", "用户添加成功！");
-        map.put("code", 200);
-        map.put("success", true);
-        map.put("data", null);
-        return map;
+        if (userMapper.insertSelective(user) != 1) {
+            return new RestVo(-100, false, "fail", null);
+        }
+
+        return new RestVo(200, true, "OK", user);
     }
 
-    //删除一个
     @Override
-    public Map<String, Object> del(Long id) {
-        map.put("code", 404);
-        map.put("message", "用户删除失败");
-        map.put("success", false);
-        errMap.put("errMsg", "添加失败");
-        map.put("data",errMap);
-        if (id == null) {
-            return map;
+    public RestVo delete(Long id) {
+        if (userMapper.deleteByPrimaryKey(id) != 1) {
+            return new RestVo(-10, false, "fail", null);
         }
-        User user = userMapper.selectByPrimaryKey(id);
-        if (user == null) {
-            return map;
-        }
-        map.put("code", 200);
-        map.put("message", "用户删除成功！");
-        map.put("success", true);
-        map.put("data", null);
-        return map;
+        return new RestVo(200, true, "OK", null);
     }
 
-    //修改
     @Override
-    public Map<String, Object> update(User user) {
-        map.put("message", "用户修改失败！");
-        map.put("code", 404);
-        map.put("success", false);
-        errMap.put("errMsg", "数据库无此数据或请求参数错误");
-        map.put("data", errMap);
-        if (user == null) return map;
-        int affectedRows = userMapper.updateByPrimaryKeySelective(user);
-        if (affectedRows == 0) return map;
-        map.put("message", "用户修改成功！");
-        map.put("code", 200);
-        map.put("success", true);
-        map.put("data", null);
-        return map;
+    public RestVo update(User user) {
+        if (userMapper.updateByPrimaryKeySelective(user) != 1) {
+            return new RestVo(-1000, false, "fail", null);
+        }
+        User data = userMapper.selectByPrimaryKey(user.getId());
+        return new RestVo(200, true, "OK", data);
     }
 
-    //分页service
+
     @Override
-    public Map<String, Object> getList(String pageNoStr, String pageSizeStr) {
-        map.put("message", "用户获取失败！");
-        map.put("code", 400);
-        map.put("success", false);
-
-        errMap.put("errMsg", "请求参数为null,或者数据库中没有数据");
-
-        map.put("data", errMap);
-
-        if (pageNoStr == null || pageSizeStr == null) return map;
-
-        int pageNo;
-        int pageSize;
-
-        //防止前端传的参数携带空格
-        pageNoStr = pageNoStr.trim();
-        pageSizeStr = pageSizeStr.trim();
-
+    public RestVo getList(Integer pageNum, Integer pageSize, User user) {
         try {
-            pageNo = Integer.parseInt(pageNoStr);
+            UserExample example = null;
+            if (user != null) {
+                example = new UserExample();
+                UserExample.Criteria criteria = example.createCriteria();
+                if (user.getId() != null) {
+                    criteria.andIdEqualTo(user.getId());
+
+                }
+
+                if (user.getUsername() != null)
+                    criteria.andUsernameLike("%" + user.getUsername() + "%");
+
+                if (user.getName() != null)
+                    criteria.andNameLike("%" + user.getName() + "%");
+
+                if (user.getGender() != null)
+                    criteria.andGenderEqualTo(user.getGender());
+
+            }
+            pageNum = Math.max(pageNum, 1);
+            pageSize = Math.max(pageSize, 1);
+            PageHelper.startPage(pageNum, pageSize);
+            List<User> list = userMapper.selectByExample(example);
+            PageInfo<User> pageInfo = new PageInfo<>(list);
+            DataVo<User> dataVo = new DataVo<>(pageInfo.getTotal(), list, pageNum, pageSize);
+            return new RestVo(200, true, "OK", dataVo);
         } catch (Exception e) {
-            pageNo = 1;
+            return new RestVo(-400, false, "fail", null);
         }
-
-        try{
-            pageSize = Integer.parseInt(pageSizeStr);
-        }catch (Exception e){
-            pageSize = 5;
-        }
-
-        PageHelper.startPage(pageNo, pageSize);
-        List<User> list = userMapper.selectByExample(null);
-
-        if (list == null) return map;
-
-        PageInfo<User> pageInfo = new PageInfo<>(list);
-        map.put("message", "用户获取成功！");
-        map.put("code", 200);
-        map.put("success", true);
-        map.put("data", pageInfo);
-        return map;
     }
 
+    @Override
+    public RestVo search(String keyword) {
+        UserExample example = new UserExample();
+        UserExample.Criteria criteria = example.createCriteria();
+        criteria.andNameLike("%" + keyword + "%");
+        List<User> users = userMapper.selectByExample(example);
+        if (users == null)
+            return new RestVo(-600, false, "查无此人", null);
+        return new RestVo(200, true, "OK", users);
+    }
 
 }

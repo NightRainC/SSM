@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fc.dao.AlleviationMapper">
+  <update id="click" >
+    update alleviation set click_num = click_num +1,last_click_time = #{lastClickTime} where id=#{id}
+  </update>
   <resultMap id="BaseResultMap" type="com.fc.entity.Alleviation">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="title" jdbcType="VARCHAR" property="title" />
     <result column="type" jdbcType="VARCHAR" property="type" />
-    <result column="release_time" jdbcType="INTEGER" property="releaseTime" />
+    <result column="release_time" jdbcType="TIMESTAMP" property="releaseTime" />
     <result column="cover" jdbcType="VARCHAR" property="cover" />
     <result column="last_click_time" jdbcType="TIMESTAMP" property="lastClickTime" />
     <result column="click_num" jdbcType="INTEGER" property="clickNum" />
@@ -109,7 +112,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
-    select 
+    select
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
@@ -127,16 +130,16 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.fc.entity.Alleviation">
-    insert into alleviation (id, create_time, title, 
-      type, release_time, cover, 
+    insert into alleviation (id, create_time, title,
+      type, release_time, cover,
       last_click_time, click_num, content
       )
-    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR}, 
-      #{type,jdbcType=VARCHAR}, #{releaseTime,jdbcType=INTEGER}, #{cover,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{title,jdbcType=VARCHAR},
+      #{type,jdbcType=VARCHAR}, #{releaseTime,jdbcType=INTEGER}, #{cover,jdbcType=VARCHAR},
       #{lastClickTime,jdbcType=TIMESTAMP}, #{clickNum,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.fc.entity.Alleviation">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.fc.entity.Alleviation">
     insert into alleviation
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

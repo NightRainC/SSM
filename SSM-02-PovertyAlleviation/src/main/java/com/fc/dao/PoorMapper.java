@@ -3,8 +3,12 @@ package com.fc.dao;
 import com.fc.entity.Poor;
 import com.fc.entity.PoorExample;
 import com.fc.entity.PoorWithBLOBs;
+
+import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+
+import javax.xml.crypto.Data;
 
 public interface PoorMapper {
     long countByExample(PoorExample example);
@@ -34,4 +38,6 @@ public interface PoorMapper {
     int updateByPrimaryKeyWithBLOBs(PoorWithBLOBs record);
 
     int updateByPrimaryKey(Poor record);
+
+    int click(@Param("id") Long id, @Param("lastClickTime") Date lastClickTime);
 }

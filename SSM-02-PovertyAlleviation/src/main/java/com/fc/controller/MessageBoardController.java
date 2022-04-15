@@ -1,40 +1,39 @@
 package com.fc.controller;
-
-import com.fc.entity.MessageBoard;
 import com.fc.entity.MessageBoardWithBLOBs;
 import com.fc.service.MessageBoardService;
+import com.fc.vo.RestVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
 @RestController
-@RequestMapping("msgBoard")
+@RequestMapping("msgboard")
 public class MessageBoardController {
     @Autowired
     private MessageBoardService messageBoardService;
     //增
-    @RequestMapping("add")
-    public  Map<String,Object> add(@RequestBody MessageBoardWithBLOBs messageBoardWithBLOBs) {
+    @PostMapping("add")
+    public RestVo add(@RequestBody MessageBoardWithBLOBs messageBoardWithBLOBs) {
     return messageBoardService.add(messageBoardWithBLOBs);
     }
     //删
-    @RequestMapping("delete")
-    public Map<String,Object> delete(Long id){
+    @GetMapping("delete")
+    public RestVo delete(Long id){
         return  messageBoardService.delete(id);
     }
     //回复
-    @RequestMapping("reply")
-    public  Map<String ,Object> reply(Long id,String reply,String replyPicture,boolean isDel){
+    @PostMapping("reply")
+    public  RestVo reply(Long id,String reply,String replyPicture,boolean isDel){
     return  messageBoardService.reply(id,reply,replyPicture,isDel);
     }
+    @PostMapping("update")
+    public RestVo update(@RequestBody MessageBoardWithBLOBs message){
+        return  messageBoardService.update(message);
+    }
     //查
-    @RequestMapping("getList")
-    public Map<String, Object> getList(@RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo, @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,String userId) {
-        return messageBoardService.getList(pageNo,pageSize,userId);
+    @GetMapping("getlist")
+    public RestVo getList(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, @RequestParam(value = "pageSize", defaultValue = "3") Integer pageSize, MessageBoardWithBLOBs message) {
+        return messageBoardService.getList(pageNum,pageSize,message);
     }
 
 }

@@ -1,15 +1,16 @@
 package com.fc.service;
 
 import com.fc.entity.MessageBoardWithBLOBs;
-
-import java.util.Map;
+import com.fc.vo.RestVo;
 
 public interface MessageBoardService {
-    Map<String, Object> getList(Integer pageNo, Integer pageSize, String userId);
+    RestVo getList(Integer pageNum, Integer pageSize, MessageBoardWithBLOBs message);
 
-    Map<String, Object> add(MessageBoardWithBLOBs messageBoardWithBLOBs);
+    RestVo add(MessageBoardWithBLOBs messageBoard);
 
-    Map<String, Object> delete(Long id);
+    RestVo delete(Long id);
 
-    Map<String, Object> reply(Long id, String reply, String replyPicture, boolean isDel);
+    RestVo reply(Long id, String reply, String replyPicture, boolean isDel);
+
+    RestVo update(MessageBoardWithBLOBs message);
 }

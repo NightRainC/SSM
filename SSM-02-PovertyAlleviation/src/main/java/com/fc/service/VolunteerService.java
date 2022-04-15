@@ -1,15 +1,20 @@
 package com.fc.service;
 
 import com.fc.entity.VolunteerRecruitment;
+import com.fc.vo.RestVo;
 
-import java.util.Map;
+import java.util.Date;
 
 public interface VolunteerService {
-    Map<String, Object> getList(Integer pageNo, Integer pageSize);
 
-    Map<String, Object> add(VolunteerRecruitment volunteer);
 
-    Map<String, Object> delete(Long id);
+    RestVo add(VolunteerRecruitment volunteer);
 
-    Map<String, Object> update(VolunteerRecruitment volunteer);
+    RestVo delete(Long id);
+
+    RestVo update(VolunteerRecruitment volunteer);
+
+    RestVo getList(Integer pageNum, Integer pageSize, VolunteerRecruitment volunteer);
+
+    RestVo click(Long id, Date lastClickTime);
 }

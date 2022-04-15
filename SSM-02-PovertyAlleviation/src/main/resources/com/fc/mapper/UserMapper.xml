@@ -89,8 +89,8 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+  <select id="selectByPrimaryKey"  parameterType="java.lang.Long"  resultMap="BaseResultMap">
+    select
     <include refid="Base_Column_List" />
     from user
     where id = #{id,jdbcType=BIGINT}
@@ -105,17 +105,17 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.fc.entity.User">
-    insert into user (id, create_time, username, 
-      password, name, age, 
-      gender, phone, email, 
+  <insert id="insert" useGeneratedKeys="true" parameterType="com.fc.entity.User">
+    insert into user (id, create_time, username,
+      password, name, age,
+      gender, phone, email,
       photo)
-    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{username,jdbcType=VARCHAR}, 
-      #{password,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{age,jdbcType=VARCHAR}, 
-      #{gender,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{username,jdbcType=VARCHAR},
+      #{password,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{age,jdbcType=VARCHAR},
+      #{gender,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
       #{photo,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.fc.entity.User">
+  <insert id="insertSelective"  useGeneratedKeys="true" keyProperty="id" parameterType="com.fc.entity.User">
     insert into user
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

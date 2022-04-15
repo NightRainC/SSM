@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface CarouselMapper {
+    int  changeStates(@Param("id") Integer id);
+
     long countByExample(CarouselExample example);
 
     int deleteByExample(CarouselExample example);
@@ -27,4 +29,6 @@ public interface CarouselMapper {
     int updateByPrimaryKeySelective(Carousel record);
 
     int updateByPrimaryKey(Carousel record);
+
+
 }

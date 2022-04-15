@@ -89,7 +89,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from collection
     where id = #{id,jdbcType=BIGINT}
@@ -105,16 +105,16 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.fc.entity.Collection">
-    insert into collection (id, create_time, user_id, 
-      ref_id, table_name, name, 
+    insert into collection (id, create_time, user_id,
+      ref_id, table_name, name,
       picture, type, recommend_type
       )
-    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{userId,jdbcType=BIGINT}, 
-      #{refId,jdbcType=BIGINT}, #{tableName,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{userId,jdbcType=BIGINT},
+      #{refId,jdbcType=BIGINT}, #{tableName,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
       #{picture,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{recommendType,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.fc.entity.Collection">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.fc.entity.Collection">
     insert into collection
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

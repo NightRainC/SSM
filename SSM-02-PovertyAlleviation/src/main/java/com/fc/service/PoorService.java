@@ -1,16 +1,21 @@
 package com.fc.service;
 
 import com.fc.entity.PoorWithBLOBs;
+import com.fc.vo.RestVo;
 
-import java.util.Map;
+import java.util.Date;
+
 
 public interface PoorService {
-    Map<String, Object> getList(Integer pageNo, Integer pageSize);
+    RestVo add(PoorWithBLOBs poor);
 
-    Map<String, Object> add(PoorWithBLOBs poor);
+    RestVo delete(Long id);
 
-    Map<String, Object> update(PoorWithBLOBs poor);
+    RestVo update(PoorWithBLOBs poor);
 
 
-    Map<String, Object> delete(Long id);
+    RestVo getList(Integer pageNum, Integer pageSize, PoorWithBLOBs poor);
+
+
+    RestVo click(Long id, Date clickNum);
 }

@@ -2,13 +2,9 @@ package com.fc.controller;
 
 import com.fc.entity.Carousel;
 import com.fc.service.CarouselService;
+import com.fc.vo.RestVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("carousel")
@@ -17,32 +13,36 @@ public class CarouselController {
     private CarouselService carouselService;
 
     //增
-    @RequestMapping("add")
-    public Map<String, Object> add(@RequestBody Carousel carousel) {
+    @PostMapping("add")
+    public RestVo add(@RequestBody Carousel carousel) {
         return carouselService.add(carousel);
     }
 
     //删
-    @RequestMapping("del")
-    public Map<String, Object> del(Integer id) {
-        return carouselService.del(id);
+    @GetMapping("delete")
+    public RestVo delete(Integer id) {
+        return carouselService.delete(id);
     }
 
     //改
-    @RequestMapping("update")
-    public Map<String, Object> update(@RequestBody Carousel carousel) {
+    @PostMapping("update")
+    public RestVo update(@RequestBody Carousel carousel) {
         return carouselService.update(carousel);
     }
 
     //查
-    @RequestMapping("list")
-    public Map<String, Object> list(@RequestParam(value = "carousel", defaultValue = "") String carousel) {
-        return carouselService.getList(carousel);
+    @GetMapping("getlist")
+
+    public RestVo getList(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                          @RequestParam(value = "pageSize", defaultValue = "3") Integer pageSize,
+                          Carousel carousel) {
+        return carouselService.getList(pageNum, pageSize, carousel);
     }
+
     //状态取反
-    @RequestMapping("state")
-    public  Map<String,Object> state(Integer id){
-        return  carouselService.setState(id);
+    @GetMapping("state")
+    public RestVo state(Integer id) {
+        return carouselService.setState(id);
     }
 
 

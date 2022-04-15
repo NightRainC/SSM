@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fc.dao.CarouselMapper">
   <cache/>
+
+  <update id="changeStates">
+    update  carousel set available = !available where id = #{id}
+  </update>
+
   <resultMap id="BaseResultMap" type="com.fc.entity.Carousel">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
@@ -84,7 +89,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from carousel
     where id = #{id,jdbcType=INTEGER}
@@ -99,13 +104,13 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.fc.entity.Carousel">
-    insert into carousel (id, name, picture, 
+  <insert id="insert"  useGeneratedKeys="true"  parameterType="com.fc.entity.Carousel">
+    insert into carousel (id, name, picture,
       available)
-    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{picture,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{picture,jdbcType=VARCHAR},
       #{available,jdbcType=BIT})
   </insert>
-  <insert id="insertSelective" parameterType="com.fc.entity.Carousel">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.fc.entity.Carousel">
     insert into carousel
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
