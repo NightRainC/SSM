@@ -49,6 +49,7 @@ public class MessageBoardServiceImpl implements MessageBoardService {
         MessageBoardWithBLOBs data = mapper.selectByPrimaryKey(id);
         if (reply != null) data.setReply(reply);
         if (replyPicture != null) data.setReplyPicture(replyPicture);
+        data.setId(null);
         if (mapper.insertSelective(data) < 1) {
             return new RestVo(-100, false, "回复失败", null);
         }
@@ -58,11 +59,11 @@ public class MessageBoardServiceImpl implements MessageBoardService {
 
     @Override
     public RestVo update(MessageBoardWithBLOBs message) {
-        if (mapper.updateByPrimaryKeySelective(message) < 1){
-            return  new RestVo(-400,false,"修改失败",null);
+        if (mapper.updateByPrimaryKeySelective(message) < 1) {
+            return new RestVo(-400, false, "修改失败", null);
         }
         MessageBoardWithBLOBs data = mapper.selectByPrimaryKey(message.getId());
-        return new RestVo(200,true,"修改成功",data);
+        return new RestVo(200, true, "修改成功", data);
     }
 
     @Override
