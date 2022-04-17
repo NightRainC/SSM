@@ -58,7 +58,7 @@ public class CollectionServiceImpl implements CollectionService {
                     criteria.andTableNameLike("%" + collection.getTableName() + "%");
 
                 if (collection.getName() != null)
-                    criteria.andTableNameLike("%" + collection.getName() + "%");
+                    criteria.andNameLike("%" + collection.getName() + "%");
 
                 if (collection.getType() != null)
                     criteria.andTypeEqualTo(collection.getType());
